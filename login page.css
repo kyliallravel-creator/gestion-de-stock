@@ -1,0 +1,524 @@
+/* Import Google Fonts et Font Awesome */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+/* Variables CSS */
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1f2937;
+  --panel-bg: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+  --panel-border: rgba(148, 163, 184, 0.2);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --accent-primary: #3b82f6;
+  --accent-secondary: #06b6d4;
+  --accent-gradient: linear-gradient(135deg, #3b82f6, #06b6d4);
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --border-radius: 16px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset et animations */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+  }
+}
+
+@keyframes parallax {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Body avec background contextuel amélioré */
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: 
+    linear-gradient(135deg, rgba(10, 14, 26, 0.9) 0%, rgba(17, 24, 39, 0.85) 50%, rgba(30, 58, 138, 0.8) 100%),
+    url('assets/images/pexels-tiger-lily-4487383.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow-y: auto; /* ✅ permet le défilement vertical */
+  overflow-x: hidden; /* garde le design propre horizontalement */
+}
+
+/* Fallback si l'image SVG ne charge pas */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+  z-index: -2;
+}
+
+/* Éléments décoratifs animés */
+body::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: parallax 20s ease-in-out infinite alternate;
+  z-index: -1;
+}
+
+/* Particules flottantes */
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.particle:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.particle:nth-child(2) {
+  top: 60%;
+  right: 15%;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.particle:nth-child(3) {
+  bottom: 30%;
+  left: 20%;
+  animation: float 7s ease-in-out infinite;
+}
+
+/* Conteneur principal des formulaires */
+.connexion, .inscription, .oubli {
+  animation: fadeInUp 0.8s ease-out;
+  position: relative;
+  z-index: 10;
+}
+
+/* Styles communs pour tous les formulaires */
+.connexion div, .inscription div, .oubli div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 450px;
+  max-width: 90vw;
+  padding: 3rem 2.5rem;
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-xl);
+  animation: slideInScale 0.6s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Effet de brillance sur les conteneurs */
+.connexion div::before, .inscription div::before, .oubli div::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Bordure animée pour les formulaires */
+.connexion div::after, .inscription div::after, .oubli div::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: var(--accent-gradient);
+  border-radius: var(--border-radius);
+  z-index: -1;
+  opacity: 0.3;
+  animation: glow 3s ease-in-out infinite;
+}
+
+/* Titres des formulaires avec icônes contextuelles */
+.connexion h2, .inscription h2, .oubli h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-direction: column;
+}
+
+.connexion h2 {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.connexion h2::before {
+  content: "🏢";
+  font-size: 3rem;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.3));
+}
+
+.inscription h2 {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.inscription h2::before {
+  content: "📦";
+  font-size: 3rem;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.3));
+}
+
+.oubli h2 {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2rem;
+}
+
+.oubli h2::before {
+  content: "🔑";
+  font-size: 2.5rem;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.3));
+}
+
+/* Champs de saisie améliorés avec icônes contextuelles */
+.box {
+  width: 100%;
+  padding: 1rem 1.25rem 1rem 3.5rem;
+  margin: 0.75rem 0;
+  border: 2px solid var(--panel-border);
+  border-radius: var(--border-radius);
+  background: rgba(15, 23, 42, 0.8);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: var(--transition);
+  position: relative;
+}
+
+.box::placeholder {
+  color: var(--text-muted);
+}
+
+.box:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background: rgba(15, 23, 42, 0.9);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Icônes contextuelles pour les champs */
+.box[name="username"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%233b82f6' viewBox='0 0 24 24'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+  background-size: 24px;
+}
+
+.box[name="password"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%2306b6d4' viewBox='0 0 24 24'%3E%3Cpath d='M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+  background-size: 24px;
+}
+
+.box[name="Identifiant"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%2310b981' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+  background-size: 24px;
+}
+
+/* Boutons améliorés avec effets contextuels */
+.submit, .btn {
+  width: 100%;
+  padding: 1rem 2rem;
+  margin: 1.5rem 0 1rem 0;
+  border: none;
+  border-radius: var(--border-radius);
+  background: var(--accent-gradient);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit::before, .btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.submit:hover::before, .btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.submit:hover, .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.4);
+}
+
+.submit:active, .btn:active {
+  transform: translateY(-1px);
+}
+
+/* Ajout d'icônes aux boutons */
+.connexion .submit::after {
+  content: "🚀";
+  margin-left: 0.5rem;
+}
+
+.inscription .btn::after {
+  content: "✨";
+  margin-left: 0.5rem;
+}
+
+.oubli .submit::after {
+  content: "🔍";
+  margin-left: 0.5rem;
+}
+
+/* Liens améliorés */
+.connexion a, .inscription a, .oubli a {
+  color: var(--accent-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.connexion a::before, .inscription a::before, .oubli a::before {
+  content: "→";
+  transition: var(--transition);
+}
+
+.connexion a:hover::before, .inscription a:hover::before, .oubli a:hover::before {
+  transform: translateX(5px);
+}
+
+.connexion a::after, .inscription a::after, .oubli a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent-secondary);
+  transition: width 0.3s ease;
+}
+
+.connexion a:hover::after, .inscription a:hover::after, .oubli a:hover::after {
+  width: 100%;
+}
+
+.connexion a:hover, .inscription a:hover, .oubli a:hover {
+  color: var(--accent-primary);
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+/* Paragraphes avec espacement amélioré */
+.connexion p, .inscription p, .oubli p {
+  margin: 0.75rem 0;
+  text-align: center;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Indicateur de contexte métier */
+.business-context {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+  opacity: 0.7;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.business-context::before {
+  content: "📊";
+  font-size: 1.2rem;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .connexion div, .inscription div, .oubli div {
+    width: 95vw;
+    padding: 2rem 1.5rem;
+  }
+  
+  .connexion h2, .inscription h2 {
+    font-size: 2rem;
+  }
+  
+  .oubli h2 {
+    font-size: 1.75rem;
+  }
+  
+  .box {
+    padding: 0.875rem 1rem 0.875rem 3rem;
+  }
+  
+  body {
+    background-attachment: scroll;
+  }
+}
+
+/* États de chargement */
+.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.loading .submit, .loading .btn {
+  background: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.loading .submit::after, .loading .btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Amélioration de l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mode sombre forcé pour une meilleure lisibilité */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --panel-bg: linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98));
+  }
+}

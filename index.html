@@ -1,0 +1,421 @@
+<?php
+// Page principale (SPA) - nécessite login via api/login.php (POST)
+?>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📦 StockPro - Gestion de Stock Moderne</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+  <meta name="description" content="Solution moderne de gestion de stock pour entreprises">
+  <meta name="theme-color" content="#3b82f6">
+</head>
+<body class="dark">
+  <!-- Menu burger pour mobile -->
+  <button id="mobileMenuToggle" class="mobile-menu-toggle" style="display: none;">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      Stock<span>Pro</span>
+    </div>
+    
+    <nav>
+      <button data-view="dashboard" class="active">
+        <i class="fas fa-chart-pie"></i>
+        Tableau de bord
+      </button>
+      <button data-view="products">
+        <i class="fas fa-boxes"></i>
+        Produits
+      </button>
+      <button data-view="categories">
+        <i class="fas fa-folder"></i>
+        Catégories
+      </button>
+      <button data-view="movements">
+        <i class="fas fa-exchange-alt"></i>
+        Mouvements
+      </button>
+      <button data-view="journal">
+        <i class="fas fa-file-alt"></i>
+        Journal
+      </button>
+    </nav>
+    
+    <a href="api/logout.php" class="btn-logout">
+      <i class="fas fa-sign-out-alt"></i>
+      Déconnexion
+    </a>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="search">
+        <input id="globalSearch" placeholder="Rechercher un produit, catégorie...">
+        <button id="searchBtn">
+          <i class="fas fa-search"></i>
+          Rechercher
+        </button>
+      </div>
+      <div class="userinfo">
+        <i class="fas fa-user-circle"></i>
+        Utilisateur: <span id="username">non connecté</span>
+      </div>
+    </header>
+
+    <section id="dashboard" class="view active">
+      <div class="page-header">
+        <h1>
+          <i class="fas fa-chart-pie"></i>
+          Tableau de bord
+        </h1>
+        <p>Vue d'ensemble de votre inventaire</p>
+      </div>
+      
+      <div class="cards">
+        <div class="card card-products">
+          <div class="card-icon">
+            <i class="fas fa-boxes"></i>
+          </div>
+          <div class="card-content">
+            <h3>Total produits</h3>
+            <div class="big" id="totalProducts">0</div>
+            <p class="card-subtitle">Produits en stock</p>
+          </div>
+        </div>
+        
+        <div class="card card-stock">
+          <div class="card-icon">
+            <i class="fas fa-cubes"></i>
+          </div>
+          <div class="card-content">
+            <h3>Quantité totale</h3>
+            <div class="big" id="totalStock">0</div>
+            <p class="card-subtitle">Unités disponibles</p>
+          </div>
+        </div>
+        
+        <div class="card card-expired">
+          <div class="card-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <div class="card-content">
+            <h3>Produits périmés</h3>
+            <div class="big" id="expiredCount">0</div>
+            <p class="card-subtitle">Nécessitent attention</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="recent">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-clock"></i>
+            Mouvements récents
+          </h2>
+          <button class="btn-secondary" onclick="document.querySelector('[data-view=movements]').click()">
+            <i class="fas fa-eye"></i>
+            Voir tout
+          </button>
+        </div>
+        
+        <div class="table-container">
+          <table id="recentMovementsTable">
+            <thead>
+              <tr>
+                <th><i class="fas fa-hashtag"></i> ID</th>
+                <th><i class="fas fa-box"></i> Produit</th>
+                <th><i class="fas fa-tag"></i> Type</th>
+                <th><i class="fas fa-sort-numeric-up"></i> Qté</th>
+                <th><i class="fas fa-user"></i> Employé</th>
+                <th><i class="fas fa-calendar"></i> Date</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="products" class="view">
+      <div class="toolbar">
+        <div class="page-header">
+          <h1>
+            <i class="fas fa-boxes"></i>
+            Produits
+          </h1>
+          <p>Gérez votre inventaire de produits</p>
+        </div>
+        <div class="controls">
+          <button id="btnNewProduct">
+            <i class="fas fa-plus"></i>
+            Nouveau produit
+          </button>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <table id="productsTable">
+          <thead>
+            <tr>
+              <th><i class="fas fa-hashtag"></i> ID</th>
+              <th><i class="fas fa-box"></i> Nom</th>
+              <th><i class="fas fa-folder"></i> Catégorie</th>
+              <th><i class="fas fa-sort-numeric-up"></i> Qté</th>
+              <th><i class="fas fa-calendar-times"></i> Expiration</th>
+              <th><i class="fas fa-cogs"></i> Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="productFormModal" class="modal">
+        <div class="modal-content">
+          <form id="productForm">
+            <div class="modal-header">
+              <h3 id="productFormTitle">
+                <i class="fas fa-plus-circle"></i>
+                Ajouter produit
+              </h3>
+            </div>
+            
+            <div class="form-grid">
+              <label>
+                <i class="fas fa-tag"></i>
+                Nom du produit
+                <input name="nom" required placeholder="Entrez le nom du produit">
+              </label>
+              
+              <label>
+                <i class="fas fa-folder"></i>
+                Catégorie
+                <select name="id_categorie" id="selCategory" required>
+                  <option value="">Sélectionnez une catégorie</option>
+                </select>
+              </label>
+              
+              <label>
+                <i class="fas fa-sort-numeric-up"></i>
+                Quantité en stock
+                <input type="number" name="quantite_stock" min="0" value="0" required placeholder="0">
+              </label>
+              
+              <label>
+                <i class="fas fa-calendar-times"></i>
+                Date d'expiration
+                <input type="date" name="date_expiration">
+              </label>
+            </div>
+            
+            <label>
+              <i class="fas fa-align-left"></i>
+              Description
+              <textarea name="description" rows="3" placeholder="Description du produit (optionnel)"></textarea>
+            </label>
+            
+            <input type="hidden" name="id_produit" value="">
+            
+            <div class="form-actions">
+              <button type="submit">
+                <i class="fas fa-save"></i>
+                Enregistrer
+              </button>
+              <button type="button" id="cancelProductForm" class="btn-secondary">
+                <i class="fas fa-times"></i>
+                Annuler
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="categories" class="view">
+      <div class="toolbar">
+        <div class="page-header">
+          <h1>
+            <i class="fas fa-folder"></i>
+            Catégories
+          </h1>
+          <p>Organisez vos produits par catégories</p>
+        </div>
+        <div class="controls">
+          <button id="btnNewCategory">
+            <i class="fas fa-plus"></i>
+            Nouvelle catégorie
+          </button>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <table id="catsTable">
+          <thead>
+            <tr>
+              <th><i class="fas fa-hashtag"></i> ID</th>
+              <th><i class="fas fa-tag"></i> Nom</th>
+              <th><i class="fas fa-cogs"></i> Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="catFormModal" class="modal">
+        <div class="modal-content">
+          <form id="catForm">
+            <div class="modal-header">
+              <h3>
+                <i class="fas fa-folder-plus"></i>
+                Ajouter / Modifier catégorie
+              </h3>
+            </div>
+            
+            <label>
+              <i class="fas fa-tag"></i>
+              Nom de la catégorie
+              <input name="nom" required placeholder="Entrez le nom de la catégorie">
+            </label>
+            
+            <input type="hidden" name="id_categorie" value="">
+            
+            <div class="form-actions">
+              <button type="submit">
+                <i class="fas fa-save"></i>
+                Enregistrer
+              </button>
+              <button type="button" id="cancelCatForm" class="btn-secondary">
+                <i class="fas fa-times"></i>
+                Annuler
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="movements" class="view">
+      <div class="toolbar">
+        <div class="page-header">
+          <h1>
+            <i class="fas fa-exchange-alt"></i>
+            Mouvements de stock
+          </h1>
+          <p>Suivez tous les mouvements d'inventaire</p>
+        </div>
+        <div class="controls">
+          <button id="btnNewMovement">
+            <i class="fas fa-plus"></i>
+            Nouveau mouvement
+          </button>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <table id="movementsTable">
+          <thead>
+            <tr>
+              <th><i class="fas fa-hashtag"></i> ID</th>
+              <th><i class="fas fa-box"></i> Produit</th>
+              <th><i class="fas fa-tag"></i> Type</th>
+              <th><i class="fas fa-sort-numeric-up"></i> Qté</th>
+              <th><i class="fas fa-user"></i> Employé</th>
+              <th><i class="fas fa-calendar"></i> Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="movementFormModal" class="modal">
+        <div class="modal-content">
+          <form id="movementForm">
+            <div class="modal-header">
+              <h3>
+                <i class="fas fa-exchange-alt"></i>
+                Ajouter mouvement
+              </h3>
+            </div>
+            
+            <div class="form-grid">
+              <label>
+                <i class="fas fa-box"></i>
+                Produit
+                <select name="id_produit" id="selProductForMove" required>
+                  <option value="">Sélectionnez un produit</option>
+                </select>
+              </label>
+              
+              <label>
+                <i class="fas fa-tag"></i>
+                Type de mouvement
+                <select name="type_mouvement" id="selTypeMove" required>
+                  <option value="">Sélectionnez le type</option>
+                </select>
+              </label>
+              
+              <label>
+                <i class="fas fa-sort-numeric-up"></i>
+                Quantité
+                <input type="number" name="quantite" min="1" value="1" required placeholder="1">
+              </label>
+            </div>
+            
+            <label>
+              <i class="fas fa-align-left"></i>
+              Motif / Description
+              <textarea name="description" rows="3" placeholder="Raison du mouvement (optionnel)"></textarea>
+            </label>
+            
+            <div class="form-actions">
+              <button type="submit">
+                <i class="fas fa-check"></i>
+                Valider
+              </button>
+              <button type="button" id="cancelMovementForm" class="btn-secondary">
+                <i class="fas fa-times"></i>
+                Annuler
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="journal" class="view">
+      <div class="page-header">
+        <h1>
+          <i class="fas fa-file-alt"></i>
+          Journal des actions
+        </h1>
+        <p>Historique complet des opérations</p>
+      </div>
+      
+      <div class="table-container">
+        <table id="journalTable">
+          <thead>
+            <tr>
+              <th><i class="fas fa-hashtag"></i> ID</th>
+              <th><i class="fas fa-play"></i> Action</th>
+              <th><i class="fas fa-table"></i> Table</th>
+              <th><i class="fas fa-key"></i> ID Enreg.</th>
+              <th><i class="fas fa-user"></i> Employé</th>
+              <th><i class="fas fa-calendar"></i> Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Overlay pour les modales -->
+  <div class="modal-overlay" id="modalOverlay"></div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

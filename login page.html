@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Gestionnaire de stock</title>
+  <link rel="stylesheet" href="login page.css" />
+  <script defer src="login page.js"></script>
+</head>
+<body>
+
+  <!-- Formulaire Connexion -->
+  <section id="connexion" class="connexion">
+    <form method="POST" action="traitemen.php">
+      <div>
+        <h2>LOGIN</h2>
+        <input type="hidden" name="type_formulaire" value="connexion" />
+        
+        <input type="text" class="box" name="username" placeholder="Nom d'utilisateur" required />
+        <input type="password" class="box" name="password" placeholder="Mot de passe" required />
+        <button type="submit" class="submit">Se connecter</button>
+
+        <p><a href="#" data-target="oubli">Mot de passe oublié</a></p>
+        <p><a href="#" data-target="inscription">Créer un compte</a></p>
+      </div>
+    </form>
+  </section>
+
+  <!-- Formulaire Inscription -->
+  <section id="inscription" class="inscription" style="display:none;">
+    <form method="POST" action="traitemen.php">
+      <div>
+        <h2>Inscription</h2>
+        <input type="hidden" name="type_formulaire" value="inscription" />
+
+        <input type="text" class="box" name="username" placeholder="Nom d'utilisateur" required />
+        <input type="password" class="box" name="password" placeholder="Mot de passe" required />
+        <input type="text" class="box" name="Identifiant" placeholder="Identifiant unique (à retenir)" required />
+        <button type="submit" class="btn">Créer le compte</button>
+
+        <p><a href="#" data-target="connexion">Retour à la connexion</a></p>
+      </div>
+    </form>
+  </section>
+
+  <!-- Formulaire Mot de passe oublié -->
+  <section id="oubli" class="oubli" style="display:none;">
+    <form method="POST" action="traitemen.php">
+      <div>
+        <h2>Mot de passe oublié</h2>
+        <input type="hidden" name="type_formulaire" value="oubli" />
+
+        <input type="text" class="box" name="username" placeholder="Nom d'utilisateur" required />
+        <input type="text" class="box" name="Identifiant" placeholder="Identifiant unique" required />
+        <button type="submit" class="submit">Afficher mon mot de passe</button>
+
+        <p><a href="#" data-target="connexion">Retour à la connexion</a></p>
+      </div>
+    </form>
+  </section>
+
+</body>
+</html>
